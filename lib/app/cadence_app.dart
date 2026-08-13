@@ -9,8 +9,12 @@ class CadenceApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Cadence',
-      theme: ThemeData(),
-      home: WelcomeScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        useMaterial3: true,
+      ),
+      home: const WelcomeScreen(),
     );
   }
 }
