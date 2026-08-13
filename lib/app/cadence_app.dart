@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../screens/welcome/welcome_screen.dart';
 import '../screens/sign_up/sign_up_screen.dart';
+import '../screens/sign_in/sign_in_screen.dart';
 
 class CadenceApp extends StatelessWidget {
   const CadenceApp({super.key});
@@ -15,7 +16,7 @@ class CadenceApp extends StatelessWidget {
         brightness: Brightness.dark,
         useMaterial3: true,
       ),
-      home: const SignUpScreen(),
+      home: const SignInScreen(),
     );
   }
 }
