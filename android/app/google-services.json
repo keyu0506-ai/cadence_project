@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "246507010043",
+    "project_id": "project-database-3265e",
+    "storage_bucket": "project-database-3265e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246507010043:android:e4760d37db145a619abd5e",
+        "android_client_info": {
+          "package_name": "com.example.cadence_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxF0XRi3sd8_2YfTS8bt34HRVcpmc7LV4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
