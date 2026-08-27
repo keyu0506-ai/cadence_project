@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../app/app_router.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -53,8 +56,10 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const _BackButton(),
+                    const SizedBox(height: 28),
                     const _BrandHeader(),
-                    const SizedBox(height: 72),
+                    const SizedBox(height: 44),
                     const _WelcomeMessage(),
                     const SizedBox(height: 42),
                     SignInTextField(
@@ -134,18 +139,23 @@ class _SignInScreenState extends State<SignInScreen> {
                       ],
                     ),
                     const SizedBox(height: 60),
-                    const Center(
-                      child: Text.rich(
-                        TextSpan(
-                          style: TextStyle(color: Color(0xFFAFA8BE), fontSize: 16),
-                          children: [
-                            TextSpan(text: 'New to Cadence? '),
-                            TextSpan(
-                              text: 'Create an account',
-                              style: TextStyle(color: Color(0xFFD1B6FF), fontWeight: FontWeight.w700),
+                    Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('New to Cadence? ', style: TextStyle(color: Color(0xFFAFA8BE), fontSize: 16)),
+                          TextButton(
+                            onPressed: () {
+                              context.pushReplacementNamed(AppRoutes.signUp);
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
-                          ],
-                        ),
+                            child: const Text('Create an account', style: TextStyle(color: Color(0xFFD1B6FF), fontWeight: FontWeight.w700)),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -196,6 +206,28 @@ class _BrandHeader extends StatelessWidget {
         const SizedBox(width: 15),
         const Text('Cadence', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w700)),
       ],
+    );
+  }
+}
+
+class _BackButton extends StatelessWidget {
+  const _BackButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 50,
+      height: 50,
+      child: OutlinedButton(
+        onPressed: () => context.pop(),
+        style: OutlinedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          foregroundColor: Colors.white,
+          side: const BorderSide(color: Color(0xFF4A435F)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 22),
+      ),
     );
   }
 }

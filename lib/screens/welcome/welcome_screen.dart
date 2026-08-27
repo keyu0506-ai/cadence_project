@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../app/app_router.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -73,7 +76,7 @@ class WelcomeScreen extends StatelessWidget {
                     height: isCompact ? 48 : 54,
                     child: FilledButton(
                       onPressed: () {
-                        print("get started");
+                        context.pushNamed(AppRoutes.signUp);
                       },
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFF8437E8),
@@ -94,20 +97,22 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   SizedBox(height: isCompact ? 10 : 14),
                   Center(
-                    child: RichText(
-                      text: TextSpan(
-                        style: TextStyle(color: _mutedText, fontSize: isCompact ? 14 : 16),
-                        children: [
-                          TextSpan(text: 'Already have an account? '),
-                          TextSpan(
-                            text: 'Sign in',
-                            style: TextStyle(
-                              color: Color(0xFFD1B6FF),
-                              fontWeight: FontWeight.w700,
-                            ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Already have an account? ', style: TextStyle(color: _mutedText, fontSize: isCompact ? 14 : 16)),
+                        TextButton(
+                          onPressed: () {
+                            context.pushNamed(AppRoutes.signIn);
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
-                        ],
-                      ),
+                          child: Text('Sign in', style: TextStyle(color: const Color(0xFFD1B6FF), fontSize: isCompact ? 14 : 16, fontWeight: FontWeight.w700)),
+                        ),
+                      ],
                     ),
                   ),
               ],

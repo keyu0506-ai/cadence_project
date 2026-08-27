@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../app/app_router.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -61,7 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _BackButton(),
+                  const _BackButton(),
                   const SizedBox(height: 36),
                   const _AppIcon(),
                   const SizedBox(height: 32),
@@ -144,18 +147,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
                   const SizedBox(height: 30),
-                  const Center(
-                    child: Text.rich(
-                      TextSpan(
-                        style: TextStyle(color: Color(0xFFAFA8BE), fontSize: 16),
-                        children: [
-                          TextSpan(text: 'Already have an account? '),
-                          TextSpan(
-                            text: 'Sign in',
-                            style: TextStyle(color: Color(0xFFD1B6FF), fontWeight: FontWeight.w700),
+                  Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('Already have an account? ', style: TextStyle(color: Color(0xFFAFA8BE), fontSize: 16)),
+                        TextButton(
+                          onPressed: () {
+                            context.pushReplacementNamed(AppRoutes.signIn);
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
-                        ],
-                      ),
+                          child: const Text('Sign in', style: TextStyle(color: Color(0xFFD1B6FF), fontWeight: FontWeight.w700)),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -193,13 +201,15 @@ String? _validatePassword(String? value) {
 }
 
 class _BackButton extends StatelessWidget {
+  const _BackButton();
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 50,
       height: 50,
       child: OutlinedButton(
-        onPressed: () {},
+        onPressed: () => context.pop(),
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.zero,
           foregroundColor: Colors.white,
