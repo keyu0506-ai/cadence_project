@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool hasAcceptedTerms = false;
   bool isPasswordHidden = true;
   bool showTermsError = false;
+  bool isCreatingAccount = false;
 
   @override
   void dispose() {
@@ -28,7 +30,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _createAccount() {
+  Future<void> _createAccount() async {
     final areFieldsValid = _formKey.currentState?.validate() ?? false;
 
     setState(() => showTermsError = !hasAcceptedTerms);
@@ -37,10 +39,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-    debugPrint('Name: ${_nameController.text}');
-    debugPrint('Email: ${_emailController.text}');
-    debugPrint('Password: ${_passwordController.text}');
-    debugPrint('Accepted terms: $hasAcceptedTerms');
+    setState(() => isCreatingAccount = true);
+
+    try {
+      final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
+      await credential.user?.updateDisplayName(_nameController.text.trim());
+      await credential.user?.reload();
+
+      if (!mounted) return;
+      context.goNamed(AppRoutes.home);
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_firebaseAuthErrorMessage(error))),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('We could not create your account. Please try again.'),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => isCreatingAccount = false);
+    }
   }
 
   @override
@@ -123,17 +149,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: double.infinity,
                     height: 58,
                     child: FilledButton(
-                      onPressed: _createAccount,
+                      onPressed: isCreatingAccount ? null : _createAccount,
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFF8639E8),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Text('Create Account'), SizedBox(width: 10), Icon(Icons.arrow_forward_rounded)],
-                      ),
+                      child: isCreatingAccount
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Text('Create Account'), SizedBox(width: 10), Icon(Icons.arrow_forward_rounded)],
+                            ),
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -173,6 +208,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
+  }
+}
+
+String _firebaseAuthErrorMessage(FirebaseAuthException error) {
+  switch (error.code) {
+    case 'email-already-in-use':
+      return 'An account already exists with this email address.';
+    case 'invalid-email':
+      return 'Please enter a valid email address.';
+    case 'weak-password':
+      return 'Please choose a stronger password.';
+    case 'network-request-failed':
+      return 'Check your internet connection and try again.';
+    default:
+      return 'We could not create your account. Please try again.';
   }
 }
 

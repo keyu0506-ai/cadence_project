@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,6 +17,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _passwordController = TextEditingController();
 
   bool isPasswordHidden = true;
+  bool isSigningIn = false;
 
   @override
   void dispose() {
@@ -24,13 +26,34 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  void _signIn() {
+  Future<void> _signIn() async {
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
-    debugPrint('Email: ${_emailController.text}');
-    debugPrint('Password: ${_passwordController.text}');
+    setState(() => isSigningIn = true);
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (!mounted) return;
+      context.goNamed(AppRoutes.home);
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_firebaseSignInErrorMessage(error))),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('We could not sign you in. Please try again.')),
+      );
+    } finally {
+      if (mounted) setState(() => isSigningIn = false);
+    }
   }
 
   @override
@@ -103,17 +126,26 @@ class _SignInScreenState extends State<SignInScreen> {
                       width: double.infinity,
                       height: 76,
                       child: FilledButton(
-                        onPressed: _signIn,
+                        onPressed: isSigningIn ? null : _signIn,
                         style: FilledButton.styleFrom(
                           backgroundColor: const Color(0xFF8639E8),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
                           textStyle: const TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [Text('Sign In'), SizedBox(width: 10), Icon(Icons.arrow_forward_rounded)],
-                        ),
+                        child: isSigningIn
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                            : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [Text('Sign In'), SizedBox(width: 10), Icon(Icons.arrow_forward_rounded)],
+                              ),
                       ),
                     ),
                     const SizedBox(height: 36),
@@ -166,6 +198,21 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ),
     );
+  }
+}
+
+String _firebaseSignInErrorMessage(FirebaseAuthException error) {
+  switch (error.code) {
+    case 'user-not-found':
+    case 'wrong-password':
+    case 'invalid-credential':
+      return 'We could not find an account with those details. Create an account to get started.';
+    case 'invalid-email':
+      return 'Please enter a valid email address.';
+    case 'network-request-failed':
+      return 'Check your internet connection and try again.';
+    default:
+      return 'We could not sign you in. Please try again.';
   }
 }
 

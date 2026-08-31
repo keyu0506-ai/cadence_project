@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../../widgets/cadence_bottom_navigation_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -7,6 +10,11 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayName = FirebaseAuth.instance.currentUser?.displayName?.trim();
+    final username = displayName != null && displayName.isNotEmpty
+        ? displayName
+        : 'there';
+
     return Scaffold(
       backgroundColor: _pageBackground,
       body: SafeArea(
@@ -17,43 +25,46 @@ class HomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 26, 20, 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    _HomeHeader(),
-                    SizedBox(height: 24),
-                    _BrainTodayCard(),
-                    SizedBox(height: 20),
-                    _NextFocusCard(),
-                    SizedBox(height: 28),
-                    _PlanSection(),
-                    SizedBox(height: 28),
-                    _DeadlinesSection(),
+                  children: [
+                    _HomeHeader(username: username),
+                    const SizedBox(height: 24),
+                    const _BrainTodayCard(),
+                    const SizedBox(height: 20),
+                    const _NextFocusCard(),
+                    const SizedBox(height: 28),
+                    const _PlanSection(),
+                    const SizedBox(height: 28),
+                    const _DeadlinesSection(),
                   ],
                 ),
               ),
             ),
-            const _HomeNavigationBar(),
+            const CadenceBottomNavigationBar(
+              selectedDestination: CadenceNavDestination.today,
+            ),
           ],
         ),
       ),
     );
   }
 }
-
 class _HomeHeader extends StatelessWidget {
-  const _HomeHeader();
+  const _HomeHeader({required this.username});
+
+  final String username;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Tuesday, June 20', style: TextStyle(color: Color(0xFF8882A5), fontSize: 18, fontWeight: FontWeight.w600)),
-              SizedBox(height: 7),
-              Text('Good morning, Ava ✦', style: TextStyle(color: Color(0xFF120D2D), fontSize: 35, fontWeight: FontWeight.w800, letterSpacing: -1.2)),
+              const Text('Tuesday, June 20', style: TextStyle(color: Color(0xFF8882A5), fontSize: 18, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 7),
+              Text('Good morning, $username ✦', style: const TextStyle(color: Color(0xFF120D2D), fontSize: 35, fontWeight: FontWeight.w800, letterSpacing: -1.2)),
             ],
           ),
         ),
@@ -90,7 +101,6 @@ class _HomeHeader extends StatelessWidget {
     );
   }
 }
-
 class _BrainTodayCard extends StatelessWidget {
   const _BrainTodayCard();
 
@@ -443,71 +453,6 @@ class _DeadlineCard extends StatelessWidget {
           Text(title, style: const TextStyle(color: Colors.white, fontSize: 17, height: 1.2, fontWeight: FontWeight.w800)),
           Text(date, style: const TextStyle(color: Colors.white, fontSize: 16)),
         ],
-      ),
-    );
-  }
-}
-
-class _HomeNavigationBar extends StatelessWidget {
-  const _HomeNavigationBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
-      decoration: const BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Color(0x120E0A28), blurRadius: 16, offset: Offset(0, -4))]),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: const [
-          _NavigationItem(icon: Icons.home_rounded, label: 'Today', selected: true),
-          _NavigationItem(icon: Icons.calendar_month_rounded, label: 'Schedule'),
-          _FocusNavigationButton(),
-          _NavigationItem(icon: Icons.sync_rounded, label: 'Recall'),
-          _NavigationItem(icon: Icons.person_rounded, label: 'Profile'),
-        ],
-      ),
-    );
-  }
-}
-
-class _NavigationItem extends StatelessWidget {
-  const _NavigationItem({required this.icon, required this.label, this.selected = false});
-
-  final IconData icon;
-  final String label;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = selected ? const Color(0xFF7440E7) : const Color(0xFF9690B0);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 28),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: selected ? FontWeight.w700 : FontWeight.w600)),
-      ],
-    );
-  }
-}
-
-class _FocusNavigationButton extends StatelessWidget {
-  const _FocusNavigationButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform.translate(
-      offset: const Offset(0, -30),
-      child: Container(
-        width: 72,
-        height: 72,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [Color(0xFF804CF1), Color(0xFF421AA7)]),
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: const Color(0xFF2B176E), width: 2),
-          boxShadow: const [BoxShadow(color: Color(0x447044D9), blurRadius: 15, offset: Offset(0, 8))],
-        ),
-        child: const Icon(Icons.bolt_rounded, color: Colors.white, size: 42),
       ),
     );
   }
