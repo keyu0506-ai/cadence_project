@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../widgets/cadence_bottom_navigation_bar.dart';
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -15,33 +13,22 @@ class HomeScreen extends StatelessWidget {
         ? displayName
         : 'there';
 
-    return Scaffold(
-      backgroundColor: _pageBackground,
-      body: SafeArea(
+    return ColoredBox(
+      color: _pageBackground,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 26, 20, 24),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 26, 20, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _HomeHeader(username: username),
-                    const SizedBox(height: 24),
-                    const _BrainTodayCard(),
-                    const SizedBox(height: 20),
-                    const _NextFocusCard(),
-                    const SizedBox(height: 28),
-                    const _PlanSection(),
-                    const SizedBox(height: 28),
-                    const _DeadlinesSection(),
-                  ],
-                ),
-              ),
-            ),
-            const CadenceBottomNavigationBar(
-              selectedDestination: CadenceNavDestination.today,
-            ),
+            _HomeHeader(username: username),
+            const SizedBox(height: 24),
+            const _BrainTodayCard(),
+            const SizedBox(height: 20),
+            const _NextFocusCard(),
+            const SizedBox(height: 28),
+            const _PlanSection(),
+            const SizedBox(height: 28),
+            const _DeadlinesSection(),
           ],
         ),
       ),

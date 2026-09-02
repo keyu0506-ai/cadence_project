@@ -1,27 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
-enum CadenceNavDestination { today, schedule, power, recall, profile }
 
 class CadenceBottomNavigationBar extends StatelessWidget {
   const CadenceBottomNavigationBar({
     super.key,
-    required this.selectedDestination,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
   });
 
-  final CadenceNavDestination selectedDestination;
-
-  void _navigate(BuildContext context, CadenceNavDestination destination) {
-    const paths = {
-      CadenceNavDestination.today: '/home',
-      CadenceNavDestination.schedule: '/schedule',
-      CadenceNavDestination.power: '/power',
-      CadenceNavDestination.recall: '/recall',
-      CadenceNavDestination.profile: '/profile',
-    };
-
-    context.go(paths[destination]!);
-  }
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -44,30 +31,30 @@ class CadenceBottomNavigationBar extends StatelessWidget {
           _NavigationItem(
             icon: Icons.home_rounded,
             label: 'Today',
-            selected: selectedDestination == CadenceNavDestination.today,
-            onTap: () => _navigate(context, CadenceNavDestination.today),
+            selected: selectedIndex == 0,
+            onTap: () => onDestinationSelected(0),
           ),
           _NavigationItem(
             icon: Icons.calendar_month_rounded,
             label: 'Schedule',
-            selected: selectedDestination == CadenceNavDestination.schedule,
-            onTap: () => _navigate(context, CadenceNavDestination.schedule),
+            selected: selectedIndex == 1,
+            onTap: () => onDestinationSelected(1),
           ),
           _FocusNavigationButton(
-            selected: selectedDestination == CadenceNavDestination.power,
-            onTap: () => _navigate(context, CadenceNavDestination.power),
+            selected: selectedIndex == 2,
+            onTap: () => onDestinationSelected(2),
           ),
           _NavigationItem(
             icon: Icons.sync_rounded,
             label: 'Recall',
-            selected: selectedDestination == CadenceNavDestination.recall,
-            onTap: () => _navigate(context, CadenceNavDestination.recall),
+            selected: selectedIndex == 3,
+            onTap: () => onDestinationSelected(3),
           ),
           _NavigationItem(
             icon: Icons.person_rounded,
             label: 'Profile',
-            selected: selectedDestination == CadenceNavDestination.profile,
-            onTap: () => _navigate(context, CadenceNavDestination.profile),
+            selected: selectedIndex == 4,
+            onTap: () => onDestinationSelected(4),
           ),
         ],
       ),
@@ -140,7 +127,7 @@ class _FocusNavigationButton extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
-          child: Ink(
+          child: Container(
             width: 56,
             height: 56,
             decoration: BoxDecoration(
