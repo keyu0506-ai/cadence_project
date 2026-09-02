@@ -1,14 +1,21 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../../providers/auth_providers.dart';
+
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   static const _pageBackground = Color(0xFFF7F5FF);
 
   @override
-  Widget build(BuildContext context) {
-    final displayName = FirebaseAuth.instance.currentUser?.displayName?.trim();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+    final user = switch (authState) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
+    final displayName = user?.displayName?.trim();
     final username = displayName != null && displayName.isNotEmpty
         ? displayName
         : 'there';

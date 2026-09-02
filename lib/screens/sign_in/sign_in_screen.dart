@@ -1,17 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/app_router.dart';
+import '../../providers/auth_providers.dart';
 
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -34,13 +36,11 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() => isSigningIn = true);
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await ref.read(authRepoProvider).signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
 
-      if (!mounted) return;
-      context.goNamed(AppRoutes.home);
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

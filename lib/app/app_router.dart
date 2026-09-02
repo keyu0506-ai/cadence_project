@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'cadence_shell.dart';
+import '../providers/auth_providers.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/placeholder/navigation_placeholder_screen.dart';
+import '../screens/profile/profile_screen.dart';
 import '../screens/sign_in/sign_in_screen.dart';
 import '../screens/sign_up/sign_up_screen.dart';
 import '../screens/welcome/welcome_screen.dart';
@@ -19,9 +22,37 @@ class AppRoutes {
   static const profile = 'profile';
 }
 
-final appRouter = GoRouter(
-  initialLocation: '/',
-  routes: [
+final appRouterProvider = Provider<GoRouter>((ref) {
+  late final GoRouter router;
+
+  router = GoRouter(
+    initialLocation: '/',
+    redirect: (context, state) {
+      final authState = ref.read(authStateProvider);
+
+      if (authState is AsyncLoading) {
+        return null;
+      }
+
+      final user = switch (authState) {
+        AsyncData(:final value) => value,
+        _ => null,
+      };
+      final isPublicRoute = state.matchedLocation == '/' ||
+          state.matchedLocation == '/sign-in' ||
+          state.matchedLocation == '/sign-up';
+
+      if (user == null && !isPublicRoute) {
+        return '/';
+      }
+
+      if (user != null && isPublicRoute) {
+        return '/home';
+      }
+
+      return null;
+    },
+    routes: [
     GoRoute(
       path: '/',
       name: AppRoutes.welcome,
@@ -92,14 +123,17 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/profile',
               name: AppRoutes.profile,
-              builder: (context, state) => const NavigationPlaceholderScreen(
-                title: 'Profile',
-                icon: Icons.person_rounded,
-              ),
+              builder: (context, state) => const ProfileScreen(),
             ),
           ],
         ),
       ],
     ),
-  ],
-);
+    ],
+  );
+
+  ref.listen(authStateProvider, (_, _) => router.refresh());
+  ref.onDispose(router.dispose);
+
+  return router;
+});
