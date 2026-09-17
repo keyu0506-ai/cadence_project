@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Shared navigation used by every authenticated app tab.
 class CadenceBottomNavigationBar extends StatelessWidget {
   const CadenceBottomNavigationBar({
     super.key,

@@ -1,21 +1,24 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'cadence_shell.dart';
-import '../providers/auth_providers.dart';
-import '../screens/home/home_screen.dart';
-import '../screens/placeholder/navigation_placeholder_screen.dart';
-import '../screens/profile/profile_screen.dart';
-import '../screens/sign_in/sign_in_screen.dart';
-import '../screens/sign_up/sign_up_screen.dart';
-import '../screens/welcome/welcome_screen.dart';
+import '../features/capture/presentation/screens/capture_screen.dart';
+import '../features/auth/presentation/screens/sign_in_screen.dart';
+import '../features/auth/presentation/screens/sign_up_screen.dart';
+import '../features/auth/presentation/screens/welcome_screen.dart';
+import '../features/auth/providers/auth_providers.dart';
+import '../features/home/presentation/screens/home_screen.dart';
+import '../features/power/presentation/screens/power_screen.dart';
+import '../features/profile/presentation/screens/profile_screen.dart';
+import '../features/recall/presentation/screens/recall_screen.dart';
+import '../features/schedule/presentation/screens/schedule_screen.dart';
 
 class AppRoutes {
   static const welcome = 'welcome';
   static const signUp = 'signUp';
   static const signIn = 'signIn';
   static const home = 'home';
+  static const capture = 'capture';
   static const schedule = 'schedule';
   static const power = 'power';
   static const recall = 'recall';
@@ -68,6 +71,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       name: AppRoutes.signIn,
       builder: (context, state) => const SignInScreen(),
     ),
+    GoRoute(
+      path: '/capture',
+      name: AppRoutes.capture,
+      builder: (context, state) => const CaptureScreen(),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return CadenceShell(navigationShell: navigationShell);
@@ -87,10 +95,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             GoRoute(
               path: '/schedule',
               name: AppRoutes.schedule,
-              builder: (context, state) => const NavigationPlaceholderScreen(
-                title: 'Schedule',
-                icon: Icons.calendar_month_rounded,
-              ),
+              builder: (context, state) => const ScheduleScreen(),
             ),
           ],
         ),
@@ -99,10 +104,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             GoRoute(
               path: '/power',
               name: AppRoutes.power,
-              builder: (context, state) => const NavigationPlaceholderScreen(
-                title: 'Power',
-                icon: Icons.bolt_rounded,
-              ),
+              builder: (context, state) => const PowerScreen(),
             ),
           ],
         ),
@@ -111,10 +113,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             GoRoute(
               path: '/recall',
               name: AppRoutes.recall,
-              builder: (context, state) => const NavigationPlaceholderScreen(
-                title: 'Recall',
-                icon: Icons.sync_rounded,
-              ),
+              builder: (context, state) => const RecallScreen(),
             ),
           ],
         ),

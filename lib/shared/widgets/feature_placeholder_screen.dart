@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class NavigationPlaceholderScreen extends StatelessWidget {
-  const NavigationPlaceholderScreen({
+class FeaturePlaceholderScreen extends StatelessWidget {
+  const FeaturePlaceholderScreen({
     super.key,
     required this.title,
     required this.icon,

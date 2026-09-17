@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../app/app_router.dart';
+import '../../../../app/app_router.dart';
 import '../../providers/auth_providers.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
@@ -36,7 +36,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     setState(() => isSigningIn = true);
 
     try {
-      await ref.read(authRepoProvider).signIn(
+      await ref.read(authRepositoryProvider).signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );

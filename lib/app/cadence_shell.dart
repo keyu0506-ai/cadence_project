@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../widgets/cadence_bottom_navigation_bar.dart';
+import '../shared/widgets/cadence_bottom_navigation_bar.dart';
 
 class CadenceShell extends StatelessWidget {
   const CadenceShell({super.key, required this.navigationShell});

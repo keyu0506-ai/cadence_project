@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-class AuthRepo {
-  AuthRepo({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
+class AuthRepository {
+  AuthRepository(this._auth);
 
   final FirebaseAuth _auth;
 
